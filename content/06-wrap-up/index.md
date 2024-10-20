@@ -14,3 +14,6 @@
 
 ### OpenTelemetry Collector Capstone
 [dt-k8s-otel-o11y-cap](https://github.com/popecruzdt/dt-k8s-otel-o11y-cap/tree/code-spaces)
+
+### DTU Lab Guide
+[dt-k8s-otel-o11y-dtu](https://github.com/popecruzdt/dt-k8s-otel-o11y-dtu)
