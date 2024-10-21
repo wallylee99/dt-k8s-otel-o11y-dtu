@@ -15,6 +15,9 @@ Clone the repo:
 git clone https://github.com/popecruzdt/dt-k8s-otel-o11y-dtu.git
 ```
 
+Install Node if not already installed:
+[Download Node.js](https://nodejs.org/en/download/package-manager)
+
 Run the generator command:
 ```sh
 node bin/generator.js
