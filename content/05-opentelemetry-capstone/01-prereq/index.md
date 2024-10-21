@@ -6,7 +6,7 @@
 [astronomy-shop dashboard](https://github.com/popecruzdt/dt-k8s-otel-o11y-cap/blob/code-spaces/dt-k8s-otel-o11y-cap_dt_dashboard.json)
 
 ![collector health dashboard](../../../assets/images/capstone-dt_collector_health_dashboard.png)
-[collector health dashboard](https://github.com/popecruzdt/dt-k8s-otel-o11y-cap/blob/code-spaces/OpenTelemetry_Collector_[IsItObservable]_dt_dashboard.json)
+[collector health dashboard](https://github.com/popecruzdt/dt-k8s-otel-o11y-cap/blob/code-spaces/OpenTelemetry_Collector_%5BIsItObservable%5D_dt_dashboard.json)
 
 ### Define workshop user variables
 In your Github Codespaces Terminal:

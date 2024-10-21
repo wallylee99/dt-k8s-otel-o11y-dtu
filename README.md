@@ -5,11 +5,15 @@ dynatrace opentelemetry ingest for kubernetes using opentelemetry collector dtu 
 
 ### Prerequisites
 
-TODO
+* Github Account
+* git installed locally
 
 ### Launching Lab Guide Locally
 
-Clone the repo
+Clone the repo:
+```sh
+git clone https://github.com/popecruzdt/dt-k8s-otel-o11y-dtu.git
+```
 
 Run the generator command:
 ```sh
