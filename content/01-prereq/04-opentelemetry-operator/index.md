@@ -49,3 +49,16 @@ Sample output:
 > customresourcedefinition.apiextensions.k8s.io/opampbridges.opentelemetry.io created\
 > ...\
 > validatingwebhookconfiguration.admissionregistration.k8s.io/opentelemetry-operator-validating-webhook-configuration configured
+
+Wait 30-60 seconds for opentelemetry-operator-controller-manager to finish initializing before continuing.
+
+Validate that the OpenTelemetry Operator components are running.
+
+Command:
+```sh
+kubectl get pods -n opentelemetry-operator-system
+```
+Sample output:
+| NAME                             | READY | STATUS  | RESTARTS | AGE |
+|----------------------------------|-------|---------|----------|-----|
+| opentelemetry-operator-controller-manager-5d746dbd64-rf9st   | 2/2   | Running | 0        | 1m  |
