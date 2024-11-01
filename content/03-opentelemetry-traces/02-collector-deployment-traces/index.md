@@ -334,12 +334,12 @@ https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/proc
 The `resource` processor allows us to directly add, remove, or change resource attributes on the telemetry.  View the documentation for more details.
 
 We will use this processor to make the follow changes to our telemetry:
-* `k8s.pod.ip` values in our log data are either the same or invalid; delete the useless attribute
-* `telemetry.sdk.name` set to `opentelemetry` will allow us to easily identify logs captured through OpenTelemetry
+* `k8s.pod.ip` values in our data are either the same or invalid; delete the useless attribute
+* `telemetry.sdk.name` set to `opentelemetry` will allow us to easily identify data captured through OpenTelemetry
 * `dynatrace.otel.collector` is a non-standardized attribute that we made up to help us identify which Collector captured this data
 * `dt.security_context` is a Dynatrace specific attribute that we use to manage user permissions to the telemetry
     * This could also be set using OpenPipeline, but this puts control of this attribute's value at the app/infra layer (optionally)
-    
+
 ```yaml
 processors:
     resource:
