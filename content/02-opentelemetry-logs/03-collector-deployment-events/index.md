@@ -6,7 +6,7 @@ The Kubernetes Objects receiver collects, either by pulling or watching, objects
 ### Add `k8sobjects` receiver to collect Kubernetes events as logs
 https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-objects-receiver
 
-Our goal is capture any events related to the `astronomy-shop` and `dynatrace` namespaces.
+Our goal is to capture any events related to the `astronomy-shop` and `dynatrace` namespaces.
 
 ```yaml
 receivers:
@@ -76,8 +76,6 @@ receivers:
         mode: watch
         namespaces: [astronomy-shop,dynatrace]
 ```
-
-The `k8sobjects` receiver is only available on the Contrib Distro of the OpenTelemetry Collector.  Therefore we must deploy a new Collector using the `contrib` image.
 
 ### Deploy OpenTelemetry Collector - Contrib Distro - Deployment (Gateway)
 https://github.com/open-telemetry/opentelemetry-operator
