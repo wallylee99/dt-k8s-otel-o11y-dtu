@@ -1,16 +1,18 @@
 ## Collector for Cluster Metrics
 
-https://docs.dynatrace.com/docs/extend-dynatrace/opentelemetry/collector/deployment
+### Kubernetes Cluster Metrics
 
-* Deploy OpenTelemetry Collector (Deployment)
-    * k8s_cluster Receiver
-    * otlp Receiver
-* Export to OTLP Receiver
+The Kubernetes Cluster Receiver collects metrics and entity events about the cluster as a whole using the Kubernetes API server. Use this receiver to answer questions about pod phases, node conditions, and other cluster-wide questions.
 
 ### Deploy OpenTelemetry Collector
 
 ### Contrib Distro - Deployment (Gateway)
 https://github.com/open-telemetry/opentelemetry-operator
+
+The `k8s_cluster` receiver is only available on the Contrib Distro of the OpenTelemetry Collector.  Therefore we must deploy a new Collector using the `contrib` image.
+
+Since the receiver gathers telemetry for the cluster as a whole, only one instance of the receiver is needed across the cluster in order to collect all the data.  The Collector will be deployed as a Deployment (Gateway).
+
 ```yaml
 ---
 apiVersion: opentelemetry.io/v1alpha1
@@ -68,8 +70,13 @@ Result:
 
 ### Export to OTLP Receiver
 
+The `astronomy-shop` demo application has the OpenTelemetry agents and SDKs already instrumented.  These agents and SDKs are generating metrics (traces and logs too) that are being exported to a Collector running within the `astronomy-shop` namespace bundled into the application deployment.  We want these metrics to be shipped to Dynatrace as well.
+
 ### `otlp` receiver
 https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver
+
+Adding the `otlp` receiver allows us to receive telemetry from otel exporters, such as agents and other collectors.
+
 ```yaml
 config: |
     receivers:
@@ -90,6 +97,9 @@ config: |
 ### Export OpenTelemetry data from `astronomy-shop` to OpenTelemetry Collector - Contrib Distro
 
 ### Customize astronomy-shop helm values
+
+OpenTelemetry data created by agents and SDKs should include `service.name` and `service.namespace` attributes.  We will make the `service.namespace` unique to our deployment using our `NAME` environment variable declared earlier, using a `sed` command on the Helm chart's `values.yaml` file.
+
 ```yaml
 default:
   # List of environment variables applied to all components
@@ -115,6 +125,20 @@ sed -i "s,NAME_TO_REPLACE,$NAME," astronomy-shop/collector-values.yaml
 ```
 
 ### Update `astronomy-shop` OpenTelemetry Collector export endpoint via helm
+
+Our `collector-values.yaml` contains new configurations for the application so that the `astronomy-shop` Collector includes exporters that ship to the Collectors deployed in the `dynatrace` namespace.
+
+```yaml
+exporters:
+  # Dynatrace OTel Collectors
+  otlphttp/dttraces:
+    endpoint: http://dynatrace-traces-collector.dynatrace.svc.cluster.local:4318
+  otlphttp/dtlogs:
+    endpoint: http://dynatrace-logs-collector.dynatrace.svc.cluster.local:4318
+  otlphttp/dtmetrics:
+    endpoint: http://dynatrace-metrics-cluster-collector.dynatrace.svc.cluster.local:4318
+```
+
 Command:
 ```sh
 helm upgrade astronomy-shop open-telemetry/opentelemetry-demo --values astronomy-shop/collector-values.yaml --namespace astronomy-shop --version "0.31.0"

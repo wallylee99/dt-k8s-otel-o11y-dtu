@@ -1,15 +1,14 @@
 ## Collector for Node Metrics
 
-https://docs.dynatrace.com/docs/extend-dynatrace/opentelemetry/collector/deployment
+### Kubernetes Node Metrics
 
-* Deploy OpenTelemetry Operator
-* Deploy OpenTelemetry Collector (Daemonset)
-    * kubeletstats Receiver
-* Add k8sattributes Processor
+Each Kubernetes Node runs a kubelet that includes an API server. The `kubeletstats` Receiver connects to that kubelet via the API server to collect metrics about the node and the workloads running on the node.
 
 ### Deploy OpenTelemetry Collector 
 
 ### Contrib Distro - Daemonset (Node Agent)
+
+The `kubeletstats` receiver is only available on the Contrib Distro of the OpenTelemetry Collector.  Therefore we must deploy a new Collector using the `contrib` image.
 
 ```yaml
 ---
@@ -48,6 +47,9 @@ Sample output:
 | dynatrace-metrics-node-collector-2kzlp   | 1/1   | Running | 0        | 1m  |
 
 ### Create `clusterrole` with read access to Kubernetes objects
+
+Since the receiver uses the Kubernetes API, it needs the correct permission to work correctly. For most use cases, you should give the service account running the Collector the following permissions via a ClusterRole.
+
 ```yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -103,6 +105,9 @@ Sample output:
 
 ### `kubeletstats` receiver
 https://opentelemetry.io/docs/kubernetes/collector/components/#kubeletstats-receiver
+
+By default, metrics will be collected for pods and nodes, but you can configure the receiver to collect container and volume metrics as well. The receiver also allows configuring how often the metrics are collected:
+
 ```yaml
 config: |
     receivers:
@@ -140,8 +145,15 @@ Result:
 
 ### k8sattributes Processor
 
+The Kubernetes Attributes Processor automatically discovers Kubernetes pods, extracts their metadata, and adds the extracted metadata to spans, metrics, and logs as resource attributes.
+
+The Kubernetes Attributes Processor is one of the most important components for a collector running in Kubernetes. Any collector receiving application data should use it. Because it adds Kubernetes context to your telemetry, the Kubernetes Attributes Processor lets you correlate your application’s traces, metrics, and logs signals with your Kubernetes telemetry, such as pod metrics and traces.
+
 ### Add `k8sattributes` processor
 https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-attributes-processor
+
+The `k8sattributes` processor will query metadata from the cluster about the k8s objects.  The Collector will then marry this metadata to the telemetry.
+
 ```yaml
 k8sattributes:
   auth_type: "serviceAccount"
@@ -197,3 +209,13 @@ Sample output:
 | NAME                             | READY | STATUS  | RESTARTS | AGE |
 |----------------------------------|-------|---------|----------|-----|
 | dynatrace-metrics-node-collector-drk1p   | 1/1   | Running | 0        | 1m  |
+
+### Query Pod metrics in Dynatrace
+DQL:
+```sql
+timeseries avg(k8s.pod.cpu.utilization), by: { k8s.pod.name, k8s.node.name, k8s.namespace.name, k8s.deployment.name, k8s.cluster.name, k8s.pod.uid }
+| filter k8s.namespace.name == "astronomy-shop" and k8s.deployment.name == "astronomy-shop-productcatalogservice"
+```
+Result:
+
+*Screenshot Pending*
